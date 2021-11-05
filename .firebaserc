@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "reci-peasy-22745": {
+      "hosting": {
+        "reci-peasy": [
+          "reci-peasy-22745"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "reci-peasy-22745"
+  }
+}

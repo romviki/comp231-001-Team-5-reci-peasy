@@ -103,6 +103,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "reci-peasy:build:production",
+            "firebaseProject": "reci-peasy-22745",
+            "firebaseHostingSite": "reci-peasy-22745"
+          }
         }
       }
     }
