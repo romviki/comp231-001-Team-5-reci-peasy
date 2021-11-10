@@ -1,3 +1,4 @@
+import { PagesModule } from './pages/pages.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -18,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     SharedModule,
+    PagesModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

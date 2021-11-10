@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand navbar-light bg-transparent">
+  <div class="container-fluid d-flex flex-column">
+    <a class="navbar-brand" routerLink="">
+      <img src="../../../assets/logo.png" alt="reci-peasy-logo" />
+    </a>
+    <a class="navbar-brand mt-5" routerLink="">
+      <img src="../../../assets/navbar-logo.svg" alt="reci-peasy" />
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav d-flex flex-column">
+        <a
+          class="nav-link"
+          routerLink=""
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+        <a class="nav-link" routerLink="recipes" routerLinkActive="active"
+          >Recipes</a
+        >
+        <a class="nav-link" routerLink="online-store" routerLinkActive="active"
+          >Online Store</a
+        >
+      </div>
+    </div>
+  </div>
+</nav>
