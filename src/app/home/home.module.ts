@@ -1,3 +1,4 @@
+import { RecommendedRecipeCardComponent } from './recommended-recipe-card/recommended-recipe-card.component';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,7 +8,11 @@ import { RecipeService } from '../services/recipe.service';
 
 @NgModule({
   imports: [CommonModule, RouterModule],
-  declarations: [HomeComponent, RecommendedRecipeContainerComponent],
+  declarations: [
+    HomeComponent,
+    RecommendedRecipeContainerComponent,
+    RecommendedRecipeCardComponent,
+  ],
   providers: [RecipeService],
   exports: [HomeComponent],
 })

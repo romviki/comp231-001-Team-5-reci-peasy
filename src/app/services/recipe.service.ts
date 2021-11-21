@@ -1,10 +1,11 @@
-import { Recipe } from './../models/Recipe';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
+import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +17,23 @@ export class RecipeService {
   constructor(private angularFireStore: AngularFirestore) {
     this.recipesCollection =
       this.angularFireStore.collection<Recipe>('recipes');
-    this.recipes$ = this.recipesCollection.valueChanges();
+    this.recipes$ = this.recipesCollection.valueChanges({ idField: 'id' });
   }
 
-  getRecommendedRecipes(): Observable<Recipe[]> {
-    const recommendedRecipes$ = this.recipes$.pipe();
-    return recommendedRecipes$;
+  getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
+    return this.recipes$.pipe(
+      map((recipes) => {
+        return recipes.map((recipe) => {
+          return {
+            id: recipe.id,
+            name: recipe.metaData.name,
+            description: recipe.metaData.description,
+            img: recipe.metaData.img,
+            viewed: recipe.metaData.viewed,
+          };
+        });
+      }),
+      shareReplay()
+    );
   }
 }

@@ -1,3 +1,13 @@
-<p>
-  recommended-recipe-container works!
-</p>
+<h1 class="recommended-recipe-container__title">Recommended Recipes</h1>
+<div class="container" style="width: 75vw">
+  <div class="row">
+    <div
+      class="col-3 mb-5"
+      *ngFor="let recommendedRecipe of recommendedRecipes$ | async"
+    >
+      <app-recommended-recipe-card
+        [recommendedRecipe]="recommendedRecipe"
+      ></app-recommended-recipe-card>
+    </div>
+  </div>
+</div>

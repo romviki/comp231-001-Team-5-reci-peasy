@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap");
+
+.recommended-recipe-card {
+  height: 280px;
+  width: 250px;
+  background-color: white;
+  border-radius: 5px;
+  padding: 26px;
+  font-family: "ABeeZee", sans-serif;
+
+  img {
+    margin-bottom: 18px;
+    border-radius: 5px;
+  }
+
+  .description {
+    font-size: 16px;
+    font-style: italic;
+    line-height: 18.91px;
+  }
+}
+
+.recommended-recipe-card__name {
+  width: 250px;
+  padding-top: 12px;
+  text-align: center;
+  color: #212529;
+  font-size: 20px;
+  line-height: 24px;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}

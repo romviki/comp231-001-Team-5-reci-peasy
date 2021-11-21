@@ -1,14 +1,14 @@
-import { RecipesModule } from './recipes/recipes.module';
-import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { AngularFireModule } from '@angular/fire/compat';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { environment } from '../environments/environment';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { HomeModule } from './home/home.module';
+import { RecipesModule } from './recipes/recipes.module';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
@@ -22,6 +22,7 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     HomeModule,
     RecipesModule,
+    AngularFireModule.initializeApp(environment.firebase),
   ],
   providers: [],
   bootstrap: [AppComponent],
