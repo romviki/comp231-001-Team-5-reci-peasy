@@ -1,4 +1,5 @@
-import { PagesModule } from './pages/pages.module';
+import { RecipesModule } from './recipes/recipes.module';
+import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -19,7 +20,8 @@ import { SharedModule } from './shared/shared.module';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     SharedModule,
-    PagesModule,
+    HomeModule,
+    RecipesModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
