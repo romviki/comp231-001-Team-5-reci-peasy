@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { SharedModule } from './shared/shared.module';
+import { ShoppingCartModule } from './shopping-cart/shopping-cart.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,6 +23,7 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     HomeModule,
     RecipesModule,
+    ShoppingCartModule,
     AngularFireModule.initializeApp(environment.firebase),
   ],
   providers: [],

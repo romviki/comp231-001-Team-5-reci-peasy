@@ -1,0 +1,23 @@
+:host {
+  text-align: center;
+
+  .search__input-group {
+    background-color: #e9fbf3;
+    backdrop-filter: blur(54.3656px);
+    border-radius: 10px;
+    height: 50px;
+    width: 507px;
+
+    .input-group-text {
+      @extend .input-group-text;
+      background-color: transparent;
+      border: none;
+    }
+
+    .form-control {
+      @extend .form-control;
+      border: none;
+      background-color: #e9fbf3;
+    }
+  }
+}

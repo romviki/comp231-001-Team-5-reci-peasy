@@ -3,9 +3,10 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { finalize, map, shareReplay, take, tap } from 'rxjs/operators';
 import { Recipe, RecommendedRecipe } from './../models/Recipe';
+import { LoadingService } from './loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +15,15 @@ export class RecipeService {
   private recipesCollection: AngularFirestoreCollection<Recipe>;
   recipes$: Observable<Recipe[]>;
 
-  constructor(private angularFireStore: AngularFirestore) {
+  constructor(
+    private angularFireStore: AngularFirestore,
+    private loadingService: LoadingService
+  ) {
     this.recipesCollection =
       this.angularFireStore.collection<Recipe>('recipes');
-    this.recipes$ = this.recipesCollection.valueChanges({ idField: 'id' });
+    this.recipes$ = this.recipesCollection
+      .valueChanges({ idField: 'id' })
+      .pipe(take(1));
   }
 
   getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
@@ -32,8 +38,7 @@ export class RecipeService {
             viewed: recipe.metaData.viewed,
           };
         });
-      }),
-      shareReplay()
+      })
     );
   }
 }
