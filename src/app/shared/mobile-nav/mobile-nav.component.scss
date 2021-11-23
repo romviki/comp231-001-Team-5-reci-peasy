@@ -1,0 +1,17 @@
+.nav-btn {
+  height: 50px;
+  width: 50px;
+  background-color: rgba(255, 255, 255, 0.479);
+  border: 1px solid rgb(255, 255, 255);
+
+  &:focus,
+  &:active {
+    outline: none !important;
+  }
+}
+
+.list-group-item {
+  @extend .list-group-item;
+  border: none;
+  margin: 3%;
+}

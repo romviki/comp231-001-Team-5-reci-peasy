@@ -1,0 +1,23 @@
+<button
+  class="btn nav-btn"
+  type="button"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#mobileNav"
+  aria-controls="mobileNav"
+>
+  <img src="../../../assets/navbar-mobile/⭐️ icon.svg" />
+</button>
+
+<div
+  class="offcanvas offcanvas-start w-75 w-md-50"
+  tabindex="-1"
+  id="mobileNav"
+  aria-labelledby="mobileNavLabel"
+>
+  <div class="offcanvas-body">
+    <div class="d-flex flex-column align-items-center">
+      <app-nav></app-nav>
+      <app-admin-dropdown class="mt-5"></app-admin-dropdown>
+    </div>
+  </div>
+</div>

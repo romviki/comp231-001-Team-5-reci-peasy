@@ -1,8 +1,11 @@
-<h1 class="recommended-recipe-container__title">Recommended Recipes</h1>
-<div class="container" style="width: 75vw">
+<div class="container">
   <div class="row">
+    <h1 class="title col-12">Recommended Recipes</h1>
+  </div>
+
+  <div class="row justify-content-center justify-content-md-start">
     <div
-      class="col-3 mb-5"
+      class="col-sm-12 col-md-6 col-xl-4 col-xxl-3"
       *ngFor="let recommendedRecipe of recommendedRecipes$ | async"
     >
       <app-recommended-recipe-card

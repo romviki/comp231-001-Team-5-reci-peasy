@@ -15,12 +15,11 @@ export class RecipeService {
   private recipesCollection: AngularFirestoreCollection<Recipe>;
   recipes$: Observable<Recipe[]>;
 
-  constructor(
-    private angularFireStore: AngularFirestore,
-    private loadingService: LoadingService
-  ) {
-    this.recipesCollection =
-      this.angularFireStore.collection<Recipe>('recipes');
+  constructor(private angularFireStore: AngularFirestore) {
+    this.recipesCollection = this.angularFireStore.collection<Recipe>(
+      'recipes',
+      (ref) => ref.limit(10)
+    );
     this.recipes$ = this.recipesCollection
       .valueChanges({ idField: 'id' })
       .pipe(take(1));

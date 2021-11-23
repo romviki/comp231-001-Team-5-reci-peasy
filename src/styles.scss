@@ -10,6 +10,7 @@
   box-sizing: border-box;
 }
 
+button,
 .form-control:focus {
   @extend .form-control;
   outline: 0px !important;
@@ -19,6 +20,7 @@
 
 body {
   background-color: #fdf7ee;
+  overflow-x: hidden;
 }
 
 .spinner-container {
@@ -32,4 +34,10 @@ body {
   align-items: center;
   background: rgba(0, 0, 0, 0.32);
   z-index: 20000;
+}
+
+.row {
+  @extend .row;
+  padding: 0;
+  margin: 0;
 }
