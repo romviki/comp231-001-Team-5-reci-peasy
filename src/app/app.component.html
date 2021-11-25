@@ -1,1 +1,19 @@
-<h1>{{ title }}</h1>
+<div class="w-100 container">
+  <div class="row">
+    <app-top-nav></app-top-nav>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-3">
+      <app-nav
+        class="d-none d-xl-block col-xl-3"
+        style="margin-top: -65%"
+      ></app-nav>
+    </div>
+    <div class="col-xl-9">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<app-loading></app-loading>

@@ -1,0 +1,29 @@
+<app-top-nav-wrapper>
+  <div class="row justify-content-center mt-3 d-xl-none">
+    <img src="../../../assets/logo.png" alt="logo" style="width: 100px" />
+  </div>
+  <div class="mt-5 row justify-content-end">
+    <div class="col-1 text-center d-inline d-xl-none">
+      <a [routerLink]="'shopping-cart'"
+        ><img src="../../../assets/cart-icon.svg" alt="shopping cart"
+      /></a>
+    </div>
+
+    <app-search-bar class="col-10 col-xl-4 ps-3"></app-search-bar>
+
+    <div class="col-1 col-xl-4 text-end d-none d-xl-inline">
+      <a [routerLink]="'shopping-cart'"
+        ><img
+          src="../../../assets/cart-icon.svg"
+          alt="shopping cart"
+          style="height: 39px; width: 38px"
+      /></a>
+
+      <app-admin-dropdown></app-admin-dropdown>
+    </div>
+
+    <app-mobile-nav
+      class="d-inline d-xl-none col-1 col-xl-4 text-end"
+    ></app-mobile-nav>
+  </div>
+</app-top-nav-wrapper>

@@ -1,0 +1,35 @@
+<div class="btn-group dropdown-width ms-3" dropdown>
+  <button
+    id="button-basic"
+    dropdownToggle
+    type="button"
+    class="btn btn-light d-flex justify-content-between"
+    aria-controls="dropdown-basic"
+  >
+    Admin
+    <img
+      class="bg-light"
+      src="../../../assets/admin_icon.svg"
+      alt="admin icon"
+    />
+    <span>
+      <img src="../../../assets/dropdown_arrow.svg" alt="dropdown" />
+    </span>
+  </button>
+  <ul
+    id="dropdown-basic"
+    *dropdownMenu
+    class="dropdown-menu dropdown-width mt-2"
+    role="menu"
+    aria-labelledby="button-basic"
+  >
+    <li role="menuitem">
+      <a class="dropdown-item" routerLink="recipe-list">Recipe Manager</a>
+    </li>
+    <li role="menuitem">
+      <a class="dropdown-item" routerLink="merchandise-list"
+        >Merchandise Manager</a
+      >
+    </li>
+  </ul>
+</div>

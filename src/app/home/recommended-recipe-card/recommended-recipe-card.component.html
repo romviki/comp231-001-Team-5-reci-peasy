@@ -1,0 +1,10 @@
+<div [routerLink]="['recipe', recommendedRecipe?.id]" style="cursor: pointer">
+  <div class="card">
+    <img [src]="recommendedRecipe?.img" [alt]="recommendedRecipe?.name" />
+    <div class="description">
+      <p class="">{{ recommendedRecipe?.description }}</p>
+    </div>
+  </div>
+
+  <div class="name">{{ recommendedRecipe?.name }}</div>
+</div>
