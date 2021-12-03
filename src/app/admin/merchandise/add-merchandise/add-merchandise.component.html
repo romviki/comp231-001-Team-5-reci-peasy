@@ -1,0 +1,49 @@
+<div class="container mb-5">
+  
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form [formGroup]="addMerchandiseForm" class="row g-3">
+        <!--<form class="row g-3">-->
+          <div class="col-md-6">
+            <label for="name"> Name </label>
+            <input type="text" name="name" class="form-control" formControlName="name" />
+          </div>
+
+          <div class="col-md-6">
+            <label for="price"> Price </label>
+            <input type="number" name="price" class="form-control" formControlName="price" />
+          </div>
+
+          <div class="col-md-6">
+            <label for="soldBy"> Sold By </label>
+            <select name="soldBy" class="form-control" formControlName="soldBy">
+              <option value=""> Please Select Sold By </option>
+              <option *ngFor="let soldByOpt of soldByOptions" [value]="soldByOpt">{{ soldByOpt }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="volume"> Volume </label>
+            <input type="number" name="volume" class="form-control" formControlName="volume" />
+          </div>
+
+          <div class="col-md-6">
+            <label for="allergenInformation"> Allergen Information </label>
+            <textarea class="form-control" name="allergenInformation" rows="5" style="resize: none;" formControlName="allergenInformation"></textarea>
+          </div>
+
+          <div class="col-md-6"></div>
+          <div class="col-md-6"></div>
+
+          <div class="col-md-6 gap-3 d-md-flex justify-content-md-end">
+            <button class="btn btn-primary" (click)="addMerchandise()"> Add Merchandise </button>
+            <!--<button type="button" class="btn btn-warning" onclick="document.add_merchandise_form.reset(); "> Clear </button>-->
+            <a href="/merchandise-list" class="btn btn-warning"> Cancel </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- <pre>{{ addMerchandiseForm.value | json }}</pre> -->
+</div>
