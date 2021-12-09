@@ -22,3 +22,4 @@ export interface Ingredients {
 }
 
 export type RecommendedRecipe = { id: string } & Recipe['metaData'];
+export type RecipeDetail = { id: string } & Recipe['metaData'] & Recipe['recipeDetails'];
