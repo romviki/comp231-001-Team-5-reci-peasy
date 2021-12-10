@@ -1,3 +1,49 @@
-<p>
-  recipe-detail works!
-</p>
+<div class="container" *ngIf="recipeDetail">
+  <div class="d-flex">
+    <div class="me-5">
+      <div class="recipe-name mb-3">
+        {{ recipeDetail.name }}
+      </div>
+      <div>
+        <img [src]="recipeDetail?.img" [alt]="recipeDetail?.name" />
+      </div>
+    </div>
+    <div class="flex-grow-1">
+      <div class="pt-1 pb-3">
+        Recipe Information
+      </div>
+      <div class="card-bg w-100 px-5 py-3 ms-3">
+        <div class="mb-2">
+          Cooking Time: {{ recipeDetail.cookingTime }}
+        </div>
+        <div class="mb-2">
+          Servings: {{ recipeDetail.servingPortion }}
+        </div>
+        <div class="">
+          Dietary Information: {{ recipeDetail.dietaryInformation }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="my-3 d-flex">
+    <div class="flex-grow-1">Ingredients</div>
+    <div>
+      <button type="button" class="btn btn-primary">Add to Cart</button>
+    </div>
+  </div>
+  <div class="card-bg ms-3 py-3 w-100 d-flex flex-wrap">
+    <div class="ingredient-item" *ngFor="let ingredient of recipeDetail.ingredients">
+      <input class="ms-3" type="checkbox">
+      <span class="ms-3">{{ ingredient.name }}: {{ingredient.amount}} {{ingredient.unit}}</span>
+    </div>
+  </div>
+  <div class="my-3">
+    Cooking Instruction
+  </div>
+  <div class="card-bg ms-3 py-3 w-100">
+    <p class="m-3">{{recipeDetail.instructions}}</p>
+  </div>
+</div>
+
+
+
