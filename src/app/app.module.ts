@@ -11,6 +11,8 @@ import { HomeModule } from './home/home.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { SharedModule } from './shared/shared.module';
 import { ShoppingCartModule } from './shopping-cart/shopping-cart.module';
+import { AdminModule } from './admin/admin.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +25,7 @@ import { ShoppingCartModule } from './shopping-cart/shopping-cart.module';
     SharedModule,
     HomeModule,
     RecipesModule,
+    AdminModule,
     ShoppingCartModule,
     AngularFireModule.initializeApp(environment.firebase),
   ],
