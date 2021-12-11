@@ -1,31 +1,21 @@
 import { Injectable } from '@angular/core';
 import {
-  AngularFirestore,
-  AngularFirestoreCollection,
+  AngularFirestore, QueryFn
 } from '@angular/fire/compat/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { finalize, map, shareReplay, take, tap } from 'rxjs/operators';
-import { Recipe, RecipeDetail, RecommendedRecipe } from './../models/Recipe';
+import { FirestoreError } from 'firebase/firestore';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, take } from 'rxjs/operators';
+import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  private recipesCollection: AngularFirestoreCollection<Recipe>;
-  recipes$: Observable<Recipe[]>;
-
-  constructor(private angularFireStore: AngularFirestore) {
-    this.recipesCollection = this.angularFireStore.collection<Recipe>(
-      'recipes',
-      (ref) => ref.limit(10)
-    );
-    this.recipes$ = this.recipesCollection
-      .valueChanges({ idField: 'id' })
-      .pipe(take(1));
-  }
+  constructor(private angularFireStore: AngularFirestore) {}
 
   getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
-    return this.recipes$.pipe(
+    const recipes$ = this.getRecipes$(ref => ref.orderBy('metaData.viewed').limit(10));
+    return recipes$.pipe(
       map((recipes) => {
         return recipes.map((recipe) => {
           return {
@@ -40,27 +30,26 @@ export class RecipeService {
     );
   }
 
-  getRecipeById(recipeId: string): Observable<RecipeDetail | undefined> {
-    return this.recipesCollection
-      .doc(recipeId)
-      .valueChanges({ idField: 'id' })
+  getRecipeById(recipeId: string) {
+    const recipe$ = this.getRecipeCollection().doc(recipeId).get();
+    return recipe$
       .pipe(
-        map((recipe) => {
-          if(recipe === undefined) return undefined
-
-          return {
-            id: recipe.id,
-            name: recipe.metaData.name,
-            description: recipe.metaData.description,
-            img: recipe.metaData.img,
-            viewed: recipe.metaData.viewed,
-            ingredients: recipe.recipeDetails.ingredients,
-            instructions: recipe.recipeDetails.instructions,
-            cookingTime: recipe.recipeDetails.cookingTime,
-            servingPortion: recipe.recipeDetails.servingPortion,
-            dietaryInformation: recipe.recipeDetails.dietaryInformation
-          }
-        })
+        map(res => res.data()),
+        catchError((err: FirestoreError) => throwError(err.message)),
+        take(1)
       );
+  }
+
+  getSuggestedRecipeSearch(searchTerm: string) {
+    return this.getRecipes$(ref => ref.limit(100));
+  }
+
+  private getRecipeCollection(queryCallBack?: QueryFn | undefined) {
+    return this.angularFireStore.collection<Recipe>('recipes', queryCallBack);
+  }
+
+  private getRecipes$(queryCallBack?: QueryFn | undefined) {
+    const recipesCollection = this.getRecipeCollection(queryCallBack);
+    return recipesCollection.valueChanges({ idField: 'id' }).pipe(take(1));
   }
 }

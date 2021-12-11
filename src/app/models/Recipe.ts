@@ -18,8 +18,7 @@ export interface Recipe {
 export interface Ingredients {
   name: string,
   amount: number,
-  unit: string
+  unit: 'g' | 'kg' | 'ml' | 'L'
 }
 
 export type RecommendedRecipe = { id: string } & Recipe['metaData'];
-export type RecipeDetail = { id: string } & Recipe['metaData'] & Recipe['recipeDetails'];
