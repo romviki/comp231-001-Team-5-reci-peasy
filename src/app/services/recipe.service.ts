@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  AngularFirestore, QueryFn
-} from '@angular/fire/compat/firestore';
+import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { FirestoreError } from 'firebase/firestore';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -14,7 +12,9 @@ export class RecipeService {
   constructor(private angularFireStore: AngularFirestore) {}
 
   getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
-    const recipes$ = this.getRecipes$(ref => ref.orderBy('metaData.viewed').limit(10));
+    const recipes$ = this.getRecipes$((ref) =>
+      ref.orderBy('metaData.viewed').limit(10)
+    );
     return recipes$.pipe(
       map((recipes) => {
         return recipes.map((recipe) => {
@@ -32,16 +32,15 @@ export class RecipeService {
 
   getRecipeById(recipeId: string) {
     const recipe$ = this.getRecipeCollection().doc(recipeId).get();
-    return recipe$
-      .pipe(
-        map(res => res.data()),
-        catchError((err: FirestoreError) => throwError(err.message)),
-        take(1)
-      );
+    return recipe$.pipe(
+      map((res) => res.data()),
+      catchError((err: FirestoreError) => throwError(err.message)),
+      take(1)
+    );
   }
 
-  getSuggestedRecipeSearch(searchTerm: string) {
-    return this.getRecipes$(ref => ref.limit(100));
+  getRecipes() {
+    return this.getRecipes$((ref) => ref.limit(50));
   }
 
   private getRecipeCollection(queryCallBack?: QueryFn | undefined) {

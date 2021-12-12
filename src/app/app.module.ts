@@ -12,6 +12,7 @@ import { RecipesModule } from './recipes/recipes.module';
 import { SharedModule } from './shared/shared.module';
 import { ShoppingCartModule } from './shopping-cart/shopping-cart.module';
 import { AdminModule } from './admin/admin.module';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({

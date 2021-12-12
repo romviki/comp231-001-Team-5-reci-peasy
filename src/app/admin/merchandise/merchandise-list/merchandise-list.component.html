@@ -4,44 +4,53 @@
       <h3>Available Merchandise</h3>
     </div>
     <div class="col-sm-3">
-      <a href="merchandise-list/add" class="btn btn-primary"> Add Merchandise </a>
+      <a href="merchandise-list/add" class="btn btn-primary">
+        Add Merchandise
+      </a>
     </div>
     <div class="col-sm-4"></div>
   </div>
   <br />
-  
-    <table class="table table-bordered">
-      
-        <tr>
-          <th scope="col"> Name </th>
-          <th scope="col"> Price </th>
-          <th scope="col"> Sold By </th>
-          <th scope="col"> Volume </th>
-          <th scope="col"> Allergen Information </th>
-          <th scope="col">  </th>
-        </tr>
 
-      <tr *ngFor="let merchandise of merchandiseList$ | async">
-        <th scope="row"> {{ merchandise.name }}</th>
-        <td> {{ merchandise.price }}</td>
-        <td> {{ merchandise.soldBy }}</td>
-        <td> {{ merchandise.volume }}</td>
-        <td> {{ merchandise.allergenInformation }}</td>
-        <td> 
-          <div class="row d-md-flex">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-5">
-              <button class="btn btn-primary btn-sm" (click)="navigateToEditMerchandise(merchandise.id)"> Update </button>
-            </div>
-            <div class="col-sm-5">
-              <button class="btn btn-warning btn-sm" (click)="confirmMerchandiseDelete(merchandise.id, merchandise.name)"> Remove </button>
-            </div>
-            
+  <table class="table table-bordered">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Sold By</th>
+      <th scope="col">Volume</th>
+      <th scope="col">Allergen Information</th>
+      <th scope="col"></th>
+    </tr>
+
+    <tr *ngFor="let merchandise of merchandiseList$ | async">
+      <th scope="row">{{ merchandise.name }}</th>
+      <td>{{ merchandise.price }}</td>
+      <td>{{ merchandise.soldBy }}</td>
+      <td>{{ merchandise.volume }}</td>
+      <td>{{ merchandise.allergenInformation }}</td>
+      <td>
+        <div class="row d-md-flex">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-5">
+            <a
+              class="btn btn-primary btn-sm"
+              [routerLink]="['merchandise-list/edit', merchandise.id]"
+            >
+              Update
+            </a>
           </div>
-
-        </td>
-      </tr>
-    </table>
-  
-  
+          <div class="col-sm-5">
+            <a
+              class="btn btn-warning btn-sm"
+              (click)="
+                confirmMerchandiseDelete(merchandise.id, merchandise.name)
+              "
+            >
+              Remove
+            </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
 </div>
