@@ -36,12 +36,16 @@ const routes: Routes = [
   {
     path: 'recipe-list',
     component: RecipeListComponent,
-    children: [
-      {
-        path: 'add',
-        component: AddRecipeComponent,
-      },
-    ],
+    //children: [
+    //  {
+    //    path: 'add',
+    //    component: AddRecipeComponent,
+    //  },
+    //],
+  },
+  {
+    path: 'recipe-list/add',
+    component: AddRecipeComponent,
   },
   {
     path: 'merchandise-list',

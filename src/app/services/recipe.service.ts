@@ -3,8 +3,8 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { finalize, map, shareReplay, take, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, from } from 'rxjs';
+import { finalize, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { Recipe, RecipeDetail, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
@@ -62,5 +62,12 @@ export class RecipeService {
           }
         })
       );
+  }
+
+  createRecipe(newRecipe: Recipe) : Observable<any> {
+    return from(this.angularFireStore.collection<Recipe>('recipes').add(newRecipe))
+      .pipe(
+          switchMap((documentReference) => this.angularFireStore.collection<Recipe>('recipes').doc(documentReference.id).valueChanges())
+        );
   }
 }
