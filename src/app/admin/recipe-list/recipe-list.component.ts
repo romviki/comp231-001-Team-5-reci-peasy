@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { RecommendedRecipe, RecipeItem } from 'src/app/models/Recipe';
-import { LoadingService } from 'src/app/services/loading.service';
-import { ManagerService } from './../../services/manager.service';
+import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { RecipeItem } from 'src/app/models/Recipe';
+import { ManagerService } from './../../services/manager.service';
 
 @Component({
   selector: 'app-recipe-list',
@@ -13,39 +12,30 @@ import { NavigationExtras, Router } from '@angular/router';
 export class RecipeListComponent implements OnInit {
   recipes$?: Observable<RecipeItem[]>;
 
-  constructor(
-    public managerService: ManagerService,
-    public loadingService: LoadingService,
-    private router: Router
-  ) {}
+  constructor(public managerService: ManagerService, private router: Router) {}
 
   ngOnInit() {
-    this.recipes$ = this.loadingService.showLoaderUntilCompleted(
-      this.managerService.getRecipes()
-    );
+    this.recipes$ = this.managerService.getRecipes();
   }
 
   public editRecipe(recipeId: string): void {
     const navigationExtras: NavigationExtras = {
       state: {
-        id: recipeId
-      }
-    }
+        id: recipeId,
+      },
+    };
     this.router.navigate(['recipe-list/edit'], navigationExtras);
-  };
+  }
 
   public deleteRecipe(recipeId: string): void {
-
     const navigationExtras: NavigationExtras = {
       state: {
-        id: recipeId
-      }
-    }
-    console.log("Delete->", recipeId);
+        id: recipeId,
+      },
+    };
+    console.log('Delete->', recipeId);
     this.managerService.deleteRecipe(recipeId);
-    this.recipes$ = this.loadingService.showLoaderUntilCompleted(
-      this.managerService.getRecipes()
-    );
+    this.recipes$ = this.managerService.getRecipes();
     this.router.navigate(['/recipe-list'], navigationExtras);
-  };
+  }
 }
