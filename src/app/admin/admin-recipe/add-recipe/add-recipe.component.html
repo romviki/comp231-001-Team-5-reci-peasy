@@ -1,0 +1,142 @@
+<div class="container mb-5">
+  <div class="row">
+    <form [formGroup]="addRecipeForm" (ngSubmit)="onSubmit()" class="row g-3">
+      <div formGroupName="metaData">
+        <div class="col-md-6">
+          <label for="name"> Recipe Name </label>
+          <input
+            type="text"
+            name="name"
+            class="form-control"
+            formControlName="name"
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="img"> Img </label>
+          <input
+            type="text"
+            name="img"
+            class="form-control"
+            formControlName="img"
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="description"> Description </label>
+          <input
+            type="text"
+            name="description"
+            class="form-control"
+            formControlName="description"
+          />
+        </div>
+        <div class="col-md-2">
+          <input
+            type="number"
+            name="viewed"
+            class="form-control"
+            formControlName="viewed"
+            value="1"
+            hidden
+          />
+        </div>
+      </div>
+
+      <div formGroupName="recipeDetails">
+        <div class="col-md-6">
+          <label for="cookingTime"> Cooking Time </label>
+          <input
+            type="text"
+            name="cookingTime"
+            class="form-control"
+            formControlName="cookingTime"
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="servingPortion"> Serving Portion </label>
+          <input
+            type="text"
+            name="servingPortion"
+            class="form-control"
+            formControlName="servingPortion"
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="dietaryInformation"> Dietary Information </label>
+          <input
+            type="text"
+            name="dietaryInformation"
+            class="form-control"
+            formControlName="dietaryInformation"
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="instructions"> Instructions </label>
+          <textarea
+            class="form-control"
+            name="instructions"
+            rows="20"
+            style="resize: none"
+            formControlName="instructions"
+          ></textarea>
+        </div>
+
+        <br />
+
+        <div class="col-md-2 d-md-flex justify-content-md-end">
+          <button class="btn btn-primary" (click)="addIngredients()">
+            Add Ingredients
+          </button>
+        </div>
+
+        <br />
+
+        <!--Ingredients-->
+        <div
+          formArrayName="ingredients"
+          *ngFor="let ing of ingredients.controls; let i = index"
+        >
+          <div [formGroupName]="i">
+            <div class="col-md-2">
+              <label for="name"> Ingredients Name </label>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                formControlName="name"
+              />
+            </div>
+            <div class="col-md-2">
+              <label for="amount"> Amount </label>
+              <input
+                type="number"
+                name="amount"
+                class="form-control"
+                formControlName="amount"
+              />
+            </div>
+            <div class="col-md-2">
+              <label for="unit"> Unit </label>
+              <select name="unit" class="form-control" formControlName="unit">
+                <option value="">Please Select Unit</option>
+                <option *ngFor="let unitOpt of unitOptions" [value]="unitOpt">
+                  {{ unitOpt }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-6"></div>
+            <br />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6"></div>
+      <div class="col-md-6"></div>
+
+      <div class="col-md-2 gap-3 d-md-flex justify-content-md-end">
+        <button class="btn btn-primary">Add Recipe</button>
+        <a routerLink="/recipe-list" class="btn btn-warning"> Cancel </a>
+      </div>
+    </form>
+  </div>
+</div>

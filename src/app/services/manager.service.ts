@@ -3,9 +3,9 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
-import { Observable, BehaviorSubject, from, of } from 'rxjs';
-import { finalize, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
-import { Recipe, RecipeItem, RecommendedRecipe } from '../models/Recipe';
+import { Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { Recipe, RecommendedRecipe } from '../models/Recipe';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class ManagerService {
       map((recipes) => {
         return recipes.map((recipe) => {
           return {
-            id: recipe.id,
+            id: recipe.id!,
             name: recipe.metaData.name,
             description: recipe.metaData.description,
             img: recipe.metaData.img,
@@ -41,9 +41,9 @@ export class ManagerService {
   }
 
   deleteRecipe(recipeId: string): Observable<any> {
-    console.log("Deleted recipe: " + recipeId);
+    console.log('Deleted recipe: ' + recipeId);
     return of(
-      this.angularFireStore.collection('recipes').doc(recipeId).delete()); 
+      this.angularFireStore.collection('recipes').doc(recipeId).delete()
+    );
   }
-
 }

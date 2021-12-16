@@ -1,0 +1,36 @@
+<div class="col-12">
+  <a routerLink="/recipe-list/add" class="btn btn-primary"> Add Recipe </a>
+  <div class="col-sm-8">
+    <table class="table mt-4">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+      <tr *ngFor="let recipe of recipes$ | async">
+        <th scope="row">{{ recipe.name }}</th>
+        <td>{{ recipe.description }}</td>
+        <td>
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <button
+                class="btn btn-primary btn-sm"
+                (click)="editRecipe(recipe.id)"
+              >
+                Edit
+              </button>
+            </div>
+            <div class="col-sm-5">
+              <button
+                class="btn btn-warning btn-sm"
+                (click)="deleteRecipe(recipe.id)"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

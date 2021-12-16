@@ -1,5 +1,5 @@
 export interface Recipe {
-  id: string;
+  id?: string;
   metaData: {
     name: string;
     img: string;

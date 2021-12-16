@@ -48,7 +48,11 @@ export class AddRecipeComponent implements OnInit {
 
   ngOnInit() {}
 
-  public addIngredientsFormGroup(): FormGroup {
+  get ingredients(): FormArray {
+    return this.addRecipeForm.get('recipeDetails.ingredients') as FormArray;
+  }
+
+  addIngredientsFormGroup(): FormGroup {
     return this.fb.group({
       name: [''],
       amount: [''],
@@ -56,26 +60,17 @@ export class AddRecipeComponent implements OnInit {
     });
   }
 
-  get ingredients(): FormArray {
-    return <FormArray>this.addRecipeForm.get('recipeDetails.ingredients');
-  }
-
   addIngredients() {
     this.ingredients.push(this.addIngredientsFormGroup());
   }
 
-  public addRecipe(): void {
-    var newRecipe = {
+  onSubmit(): void {
+    const newRecipe: Recipe = {
       metaData: this.addRecipeForm.value.metaData,
       recipeDetails: this.addRecipeForm.value.recipeDetails,
-    } as unknown as Recipe;
-
-    this.recipeService.createRecipe(newRecipe).subscribe((result) => {
+    };
+    this.recipeService.createRecipe(newRecipe).then((_) => {
       this.router.navigateByUrl('/recipe-list');
     });
-  }
-
-  onSubmit(): void {
-    console.log(this.addRecipeForm);
   }
 }

@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
+  DocumentReference,
   QueryFn,
 } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat';
 import { FirestoreError } from 'firebase/firestore';
-import { from, Observable, throwError } from 'rxjs';
-import { catchError, map, shareReplay, switchMap, take } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, shareReplay, take } from 'rxjs/operators';
 import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
@@ -33,7 +34,7 @@ export class RecipeService {
       map((recipes) => {
         return recipes.map((recipe) => {
           return {
-            id: recipe.id,
+            id: recipe.id!,
             name: recipe.metaData.name,
             description: recipe.metaData.description,
             img: recipe.metaData.img,
@@ -57,6 +58,10 @@ export class RecipeService {
     return this.getValueChanges$((ref) => ref.limit(50));
   }
 
+  createRecipe(newRecipe: Recipe): Promise<DocumentReference<Recipe>> {
+    return this.angularFireStore.collection<Recipe>('recipes').add(newRecipe);
+  }
+
   getCollection(
     queryCallBack?: QueryFn<firebase.firestore.DocumentData>
   ): AngularFirestoreCollection<Recipe> {
@@ -71,18 +76,5 @@ export class RecipeService {
   ): Observable<Recipe[]> {
     const recipesCollection = this.getCollection(queryCallBack);
     return recipesCollection.valueChanges({ idField: 'id' }).pipe(take(1));
-  }
-
-  createRecipe(newRecipe: Recipe): Observable<any> {
-    return from(
-      this.angularFireStore.collection<Recipe>('recipes').add(newRecipe)
-    ).pipe(
-      switchMap((documentReference) =>
-        this.angularFireStore
-          .collection<Recipe>('recipes')
-          .doc(documentReference.id)
-          .valueChanges()
-      )
-    );
   }
 }

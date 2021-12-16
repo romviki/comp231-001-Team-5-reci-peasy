@@ -32,7 +32,7 @@ export class SearchBarComponent implements OnInit {
               return recipes
                 .map((recipe) => {
                   return {
-                    id: recipe.id,
+                    id: recipe.id!,
                     name: recipe.metaData.name,
                     img: recipe.metaData.img,
                     description: recipe.metaData.description,

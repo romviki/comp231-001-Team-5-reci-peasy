@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { RecipeItem } from 'src/app/models/Recipe';
-import { ManagerService } from './../../services/manager.service';
+import { ManagerService } from '../../../services/manager.service';
 
 @Component({
   selector: 'app-recipe-list',
