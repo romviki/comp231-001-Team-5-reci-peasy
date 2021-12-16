@@ -1,18 +1,32 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+  QueryFn,
+} from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat';
 import { FirestoreError } from 'firebase/firestore';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, map, shareReplay, take } from 'rxjs/operators';
 import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  constructor(private angularFireStore: AngularFirestore) {}
+  collectionName = 'recipes';
+  collectionWithoutQuery: AngularFirestoreCollection<Recipe>;
+  valueChangesWithoutQuery$: Observable<Recipe[]>;
+
+  constructor(private angularFireStore: AngularFirestore) {
+    this.collectionWithoutQuery = this.getCollection();
+    this.valueChangesWithoutQuery$ = this.collectionWithoutQuery
+      .valueChanges({ idField: 'id' })
+      .pipe(shareReplay());
+  }
 
   getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
-    const recipes$ = this.getRecipes$((ref) =>
+    const recipes$ = this.getValueChanges$((ref) =>
       ref.orderBy('metaData.viewed').limit(10)
     );
     return recipes$.pipe(
@@ -31,7 +45,7 @@ export class RecipeService {
   }
 
   getRecipeById(recipeId: string) {
-    const recipe$ = this.getRecipeCollection().doc(recipeId).get();
+    const recipe$ = this.getCollection().doc(recipeId).get();
     return recipe$.pipe(
       map((res) => res.data()),
       catchError((err: FirestoreError) => throwError(err.message)),
@@ -40,15 +54,22 @@ export class RecipeService {
   }
 
   getRecipes() {
-    return this.getRecipes$((ref) => ref.limit(50));
+    return this.getValueChanges$((ref) => ref.limit(50));
   }
 
-  private getRecipeCollection(queryCallBack?: QueryFn | undefined) {
-    return this.angularFireStore.collection<Recipe>('recipes', queryCallBack);
+  getCollection(
+    queryCallBack?: QueryFn<firebase.firestore.DocumentData>
+  ): AngularFirestoreCollection<Recipe> {
+    return this.angularFireStore.collection<Recipe>(
+      this.collectionName,
+      queryCallBack
+    );
   }
 
-  private getRecipes$(queryCallBack?: QueryFn | undefined) {
-    const recipesCollection = this.getRecipeCollection(queryCallBack);
+  getValueChanges$(
+    queryCallBack?: QueryFn<firebase.firestore.DocumentData>
+  ): Observable<Recipe[]> {
+    const recipesCollection = this.getCollection(queryCallBack);
     return recipesCollection.valueChanges({ idField: 'id' }).pipe(take(1));
   }
 }

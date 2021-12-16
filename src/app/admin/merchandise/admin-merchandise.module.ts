@@ -5,18 +5,32 @@ import { AddMerchandiseComponent } from './add-merchandise/add-merchandise.compo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditMerchandiseComponent } from './edit-merchandise/edit-merchandise.component';
 import { RouterModule } from '@angular/router';
+import { ArrayFormatPipe } from 'src/app/pipes/array-format.pipe';
+import { RemoveMerchandiseModalComponent } from './remove-merchandise-modal/remove-merchandise-modal.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    ModalModule.forRoot(),
+  ],
   declarations: [
     MerchandiseListComponent,
     AddMerchandiseComponent,
     EditMerchandiseComponent,
+    RemoveMerchandiseModalComponent,
+
+    // pipes
+    ArrayFormatPipe,
   ],
   exports: [
     MerchandiseListComponent,
     AddMerchandiseComponent,
     EditMerchandiseComponent,
+    RemoveMerchandiseModalComponent,
   ],
 })
-export class MerchandiseModule {}
+export class AdminMerchandiseModule {}

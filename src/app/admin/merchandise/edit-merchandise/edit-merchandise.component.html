@@ -1,49 +1,146 @@
-<div class="container mb-5">
-  
-    <div class="row">
-      <div class="col-md-8 offset-md-2">
-        <form [formGroup]="editMerchandiseForm" class="row g-3">
-        <!--<form class="row g-3">-->
-          <div class="col-md-6">
-            <label for="name"> Name </label>
-            <input type="text" name="name" class="form-control" formControlName="name" />
-          </div>
-
-          <div class="col-md-6">
-            <label for="price"> Price </label>
-            <input type="number" name="price" class="form-control" formControlName="price" />
-          </div>
-
-          <div class="col-md-6">
-            <label for="soldBy"> Sold By </label>
-            <select name="soldBy" class="form-control" formControlName="soldBy">
-              <option value=""> Please Select Sold By </option>
-              <option *ngFor="let soldByOpt of soldByOptions" [value]="soldByOpt">{{ soldByOpt }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label for="volume"> Volume </label>
-            <input type="number" name="volume" class="form-control" formControlName="volume" />
-          </div>
-
-          <div class="col-md-6">
-            <label for="allergenInformation"> Allergen Information </label>
-            <textarea class="form-control" name="allergenInformation" rows="5" style="resize: none;" formControlName="allergenInformation"></textarea>
-          </div>
-
-          <div class="col-md-6"></div>
-          <div class="col-md-6"></div>
-
-          <div class="col-md-6 gap-3 d-md-flex justify-content-md-end">
-            <button class="btn btn-primary" (click)="updateMerchandise()"> Update Merchandise </button>
-            <!--<button type="button" class="btn btn-warning" onclick="document.add_merchandise_form.reset(); "> Clear </button>-->
-            <a href="/merchandise-list" class="btn btn-warning"> Cancel </a>
-          </div>
-
-        </form>
+<div class="col-md-6" *ngIf="merchandise$ | async as merchandise">
+  <form [formGroup]="editMerchandiseForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3 has-validation">
+      <label class="form-label mb-2" for="name">Merchandise Name</label>
+      <input
+        type="text"
+        name="name"
+        class="form-control input-box shadow"
+        formControlName="name"
+      />
+      <div
+        class="text-danger mt-1"
+        *ngIf="name?.invalid && (name?.dirty || name?.touched)"
+      >
+        Required
       </div>
     </div>
 
-    <!-- <pre>{{ editMerchandiseForm.value | json }}</pre> -->
+    <div class="mb-3">
+      <label class="form-label mb-2" for="price">Price</label>
+      <input
+        type="number"
+        name="price"
+        class="form-control input-box shadow"
+        formControlName="price"
+      />
+      <div
+        class="text-danger mt-1"
+        *ngIf="price?.invalid && (price?.dirty || price?.touched) && price?.errors?.['required']"
+      >
+        Required
+      </div>
+      <div
+        class="text-danger mt-1"
+        *ngIf="price?.invalid && (price?.dirty || price?.touched) && price?.errors?.['decimalError']"
+      >
+        Price must be 2 or fewer decimals
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label mb-2" for="volume">Volume</label>
+      <div class="d-flex input-group input-box shadow p-0">
+        <input
+          type="number"
+          name="volume"
+          class="form-control input-box"
+          formControlName="volume"
+        />
+
+        <select
+          name="unit"
+          class="input-group-text bg-white input-box shadow"
+          formControlName="unit"
+        >
+          <option value="" *ngIf="!merchandise?.unit">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">
+            {{ unit }}
+          </option>
+        </select>
+      </div>
+      <div
+        class="text-danger mt-1"
+        *ngIf="volume?.invalid && (volume?.dirty || volume?.touched) && volume?.errors?.['required']"
+      >
+        Volume is required
+      </div>
+      <div
+        class="text-danger mt-1"
+        *ngIf="unit?.invalid && (unit?.dirty || unit?.touched) && unit?.errors?.['required']"
+      >
+        Unit is required
+      </div>
+      <div
+        class="text-danger mt-1"
+        *ngIf="volume?.invalid && (volume?.dirty || volume?.touched) && volume?.errors?.['max']"
+      >
+        Volume is too much
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label mb-2" for="stock">Stock</label>
+      <input
+        type="number"
+        name="stock"
+        class="form-control input-box shadow"
+        formControlName="stock"
+      />
+      <div
+        class="text-danger mt-1"
+        *ngIf="stock?.invalid && stock?.dirty && stock?.errors?.['max']"
+      >
+        Stock is too much
+      </div>
+      <div
+        class="text-danger mt-1"
+        *ngIf="stock?.invalid && stock?.value && stock?.dirty && stock?.errors?.['decimalError']"
+      >
+        Stock must be an integer
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="d-flex align-items-center">
+        <label class="form-label mb-2" for="allergens">Allergens</label>
+        <div class="btn btn-sm btn-danger mx-3" (click)="addAllergenInput()">
+          <img src="../../../../assets/icons/add-icon.svg" alt="add icon" />
+        </div>
+      </div>
+      <div formGroupName="allergens">
+        <div
+          class="my-2 d-flex flex-row align-items-center"
+          *ngFor="let allergen of allergens.controls; let i = index"
+        >
+          <select
+            [formControlName]="i"
+            name="allergens-{{ i }}"
+            id="allergens-{{ i }}"
+            class="form-select input-group-text bg-white input-box shadow"
+          >
+            <option
+              *ngFor="let allergenType of allergenTypes"
+              [value]="allergenType"
+            >
+              {{ allergenType | titlecase }}
+            </option>
+          </select>
+          <div class="btn btn-default" (click)="removeAllergen(i)">
+            <img
+              src="../../../../assets/icons/delete-icon.svg"
+              alt="delete icon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-3 d-flex justify-content-end">
+      <div class="d-inline-flex">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a routerLink="/merchandise-list" class="btn btn-default">Cancel</a>
+      </div>
+    </div>
+  </form>
 </div>

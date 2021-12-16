@@ -10,6 +10,7 @@ import { MerchandiseListComponent } from './admin/merchandise/merchandise-list/m
 import { AddRecipeComponent } from './admin/add-recipe/add-recipe.component';
 import { AddMerchandiseComponent } from './admin/merchandise/add-merchandise/add-merchandise.component';
 import { EditMerchandiseComponent } from './admin/merchandise/edit-merchandise/edit-merchandise.component';
+import { EditMerchandiseGuard } from './guards/edit-merchandise.guard';
 
 const routes: Routes = [
   {
@@ -46,16 +47,15 @@ const routes: Routes = [
   {
     path: 'merchandise-list',
     component: MerchandiseListComponent,
-    children: [
-      {
-        path: 'add',
-        component: AddMerchandiseComponent,
-      },
-      {
-        path: 'edit',
-        component: EditMerchandiseComponent,
-      },
-    ],
+  },
+  {
+    path: 'merchandise-list/add',
+    component: AddMerchandiseComponent,
+  },
+  {
+    path: 'merchandise-list/edit/:id',
+    component: EditMerchandiseComponent,
+    canActivate: [EditMerchandiseGuard],
   },
   {
     path: '**',

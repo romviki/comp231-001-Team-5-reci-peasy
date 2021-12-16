@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Merchandise } from 'src/app/models/Merchandise';
 import { MerchandiseService } from 'src/app/services/merchandise.service';
-import { NavigationExtras, Router } from '@angular/router';
+import { RemoveMerchandiseModalComponent } from '../remove-merchandise-modal/remove-merchandise-modal.component';
 
 @Component({
   selector: 'app-merchandise-list',
@@ -12,55 +13,29 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class MerchandiseListComponent implements OnInit {
   merchandiseList$?: Observable<Merchandise[]>;
-  merchandiseLise2$?: Observable<Merchandise[]>;
 
   constructor(
-    public merchandiseService: MerchandiseService,
-    private router: Router
+    private merchandiseService: MerchandiseService,
+    private router: Router,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit() {
-    // this.merchandiseList$ = this.loadingService.showLoaderUntilCompleted(
-    //   this.merchandiseService.getAllMerchandise()
-    // );
     this.merchandiseList$ = this.merchandiseService.getAllMerchandise();
-
-    this.merchandiseList$.forEach((allMerch) => {
-      // console.log("all merch -> ", allMerch);
-      allMerch.forEach((merch) => {
-        // console.log("merch -> ", merch);
-      });
-    });
-
-    // this.merchandiseLise2$ = this.merchandiseService.getAllMerchandise();
-
-    // this.merchandiseLise2$?.subscribe(
-    //   (val) => {console.log(val);}
-    // );
   }
 
-  public navigateToEditMerchandise(merchandiseId: string): void {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        id: merchandiseId,
+  navigateToEditMerchandise(merchandise: Merchandise): void {
+    this.merchandiseService.editingMerchandise$.next(merchandise);
+    this.router.navigate(['merchandise-list/edit', merchandise.id]);
+  }
+
+  confirmMerchandiseDelete(merchandise: Merchandise): void {
+    const modalOptions: ModalOptions = {
+      initialState: {
+        merchandiseId: merchandise.id,
+        merchandiseName: merchandise.name,
       },
     };
-    this.router.navigate(['merchandise-list/edit'], navigationExtras);
+    this.modalService.show(RemoveMerchandiseModalComponent, modalOptions);
   }
-
-  public confirmMerchandiseDelete(
-    merchandiseId: string,
-    merchandiseName: string
-  ): void {
-    if (confirm('Confirm removal of ' + merchandiseName)) {
-      console.log('removeMerchandise -> ', merchandiseId);
-      this.merchandiseService
-        .removeMerchandise(merchandiseId)
-        .subscribe((res) => {
-          console.log('delete result -> ', res);
-        });
-    }
-  }
-
-  public removeMerchandise(merchandiseId: string): void {}
 }

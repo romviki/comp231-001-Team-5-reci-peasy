@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Merchandise } from 'src/app/models/Merchandise';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { DecimalValidator } from 'src/app/form-validators/decimal.validator';
+import { Allergen, Merchandise, Unit } from 'src/app/models/Merchandise';
 import { MerchandiseService } from 'src/app/services/merchandise.service';
 
 @Component({
@@ -10,59 +12,68 @@ import { MerchandiseService } from 'src/app/services/merchandise.service';
   styleUrls: ['./add-merchandise.component.scss'],
 })
 export class AddMerchandiseComponent implements OnInit {
-  addMerchandiseForm: FormGroup;
-  soldByOptions: string[] = [
-    'Piece',
-    'Liters',
-    'MilliLitter',
-    'Grams',
-    'Kilograms',
-  ];
+  merchandise$?: Observable<Merchandise | undefined>;
+  addMerchandiseForm = this.fb.group({
+    name: ['', [Validators.required]],
+    price: ['', [Validators.required, DecimalValidator(2)]],
+    unit: ['g', [Validators.required]],
+    volume: [
+      '',
+      [Validators.required, Validators.max(9999.99), DecimalValidator(2)],
+    ],
+    stock: ['', [Validators.max(9999), DecimalValidator(0)]],
+    allergens: this.fb.array([]),
+  });
+  units: Unit[] = ['g', 'kg', 'ml', 'L', 'counts'];
+  allergenTypes: Allergen[] = ['dairy', 'eggs', 'gluten', 'nuts', 'seafood'];
+  merchandiseId!: string;
 
   constructor(
     private merchandiseService: MerchandiseService,
-    private router: Router
-  ) {
-    this.addMerchandiseForm = new FormGroup({
-      name: new FormControl(),
-      price: new FormControl(),
-      soldBy: new FormControl(),
-      volume: new FormControl(),
-      allergenInformation: new FormControl(),
-    });
+    private router: Router,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
+
+  get name() {
+    return this.addMerchandiseForm.get('name');
   }
 
-  ngOnInit() {}
+  get price() {
+    return this.addMerchandiseForm.get('price');
+  }
 
-  public addMerchandise(): void {
-    // bind to Merchandise Model
-    var newMerchandise = {
-      allergenInformation: this.addMerchandiseForm.value.allergenInformation,
-      name: this.addMerchandiseForm.value.name,
-      price: this.addMerchandiseForm.value.price,
-      soldBy: this.addMerchandiseForm.value.soldBy,
-      volume: this.addMerchandiseForm.value.volume,
-    } as Merchandise;
+  get unit() {
+    return this.addMerchandiseForm.get('unit');
+  }
 
-    console.log('addMerchandiseForm -> ', newMerchandise);
+  get volume() {
+    return this.addMerchandiseForm.get('volume');
+  }
 
-    //   this.loadingService.showLoaderUntilCompleted(
-    //     this.merchandiseService.createMerchandise(newMerchandise)
-    //   ).subscribe(
-    //     (result) => {
-    //       console.log("add result", result);
-    //     }
-    //   );
-    // }
+  get stock() {
+    return this.addMerchandiseForm.get('stock');
+  }
 
-    this.merchandiseService
-      .createMerchandise(newMerchandise)
-      .subscribe((result) => {
-        console.log('add result', result);
-        // if (result != undefined) {
-        //   this.merchandiseService.initMerchandiseCollection();
-        // }
-        this.router.navigateByUrl('/merchandise-list');
-      });
+  get allergens() {
+    return this.addMerchandiseForm.get('allergens') as FormArray;
+  }
+
+  addAllergenInput(allergen = '') {
+    this.allergens.push(this.fb.control(allergen));
+  }
+
+  removeAllergen(i: number) {
+    this.allergens.removeAt(i);
+    this.addMerchandiseForm.markAsDirty();
+  }
+
+  ngOnInit(): void {}
+
+  onSubmit() {
+    if (this.addMerchandiseForm.valid && this.addMerchandiseForm.dirty) {
+      this.merchandiseService.createMerchandise(this.addMerchandiseForm.value);
+    }
+    this.router.navigate(['merchandise-list']);
   }
 }

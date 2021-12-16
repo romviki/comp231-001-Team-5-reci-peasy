@@ -1,56 +1,92 @@
-<div class="container mb-5">
-  <div class="row g-3">
-    <div class="col-sm-5">
-      <h3>Available Merchandise</h3>
-    </div>
-    <div class="col-sm-3">
-      <a href="merchandise-list/add" class="btn btn-primary">
+<div class="container mb-5 bg-grey p-0 pt-4">
+  <div class="row">
+    <div class="d-flex justify-content-end">
+      <a [routerLink]="['/merchandise-list', 'add']" class="btn btn-primary">
+        <img
+          class="me-2"
+          src="../../../../assets/icons/add-icon.svg"
+          alt="add merchandise"
+        />
         Add Merchandise
       </a>
     </div>
-    <div class="col-sm-4"></div>
   </div>
-  <br />
 
-  <table class="table table-bordered">
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Price</th>
-      <th scope="col">Sold By</th>
-      <th scope="col">Volume</th>
-      <th scope="col">Allergen Information</th>
-      <th scope="col"></th>
-    </tr>
-
-    <tr *ngFor="let merchandise of merchandiseList$ | async">
-      <th scope="row">{{ merchandise.name }}</th>
-      <td>{{ merchandise.price }}</td>
-      <td>{{ merchandise.soldBy }}</td>
-      <td>{{ merchandise.volume }}</td>
-      <td>{{ merchandise.allergenInformation }}</td>
-      <td>
-        <div class="row d-md-flex">
-          <div class="col-sm-2"></div>
-          <div class="col-sm-5">
-            <a
-              class="btn btn-primary btn-sm"
-              [routerLink]="['merchandise-list/edit', merchandise.id]"
-            >
-              Update
-            </a>
+  <table class="table table-borderless" *ngIf="merchandiseList$ | async">
+    <thead>
+      <tr class="vertical-align-middle">
+        <th class="py-3 px-3" scope="col">Merchandise ID</th>
+        <th scope="col">Name</th>
+        <th class="text-center" scope="col">Price</th>
+        <th class="text-center" scope="col">Volume</th>
+        <th scope="col">Allergens</th>
+        <th class="text-center" scope="col">Status</th>
+        <th scope="col">
+          <div class="d-flex justify-content-center">
+            <img
+              src="../../../../assets/icons/three-dot-icon.svg"
+              alt="three dots"
+            />
           </div>
-          <div class="col-sm-5">
-            <a
-              class="btn btn-warning btn-sm"
-              (click)="
-                confirmMerchandiseDelete(merchandise.id, merchandise.name)
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <ng-container *ngFor="let merchandise of merchandiseList$ | async">
+        <tr class="vertical-align-middle">
+          <td class="py-4 px-3">{{ merchandise.id }}</td>
+          <td>{{ merchandise.name }}</td>
+          <td class="text-center">{{ merchandise.price | currency: "CAD" }}</td>
+          <td class="text-center">
+            {{ merchandise.volume }} {{ merchandise.unit }}
+          </td>
+          <td>{{ (merchandise.allergens | arrayFormat: " | ") || "N/A" }}</td>
+          <td>
+            <ng-container
+              *ngTemplateOutlet="
+                merchandise.stock ? inStockBadge : outOfStockBadge
               "
-            >
-              Remove
-            </a>
-          </div>
-        </div>
-      </td>
-    </tr>
+            ></ng-container>
+          </td>
+          <td>
+            <div class="d-grid gap-4 d-md-flex justify-content-md-center">
+              <div class="btn-merchandise">
+                <a (click)="navigateToEditMerchandise(merchandise)">
+                  <img
+                    src="../../../../assets/icons/edit-icon.svg"
+                    alt="update icon"
+                  />
+                </a>
+              </div>
+              <div class="btn-merchandise">
+                <a (click)="confirmMerchandiseDelete(merchandise)">
+                  <img
+                    src="../../../../assets/icons/delete-icon.svg"
+                    alt="delete icon"
+                  />
+                </a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
   </table>
+
+  <p class="text-danger" *ngIf="!(merchandiseList$ | async)">
+    No Merchandise Exists
+  </p>
 </div>
+
+<ng-template #inStockBadge>
+  <div class="badge bg-success text-white d-block w-75 my-0 mx-auto">
+    In Stock
+  </div>
+</ng-template>
+
+<ng-template #outOfStockBadge>
+  <div class="badge bg-out-of-stock text-danger d-block w-75 my-0 mx-auto">
+    Out of Stock
+  </div>
+</ng-template>

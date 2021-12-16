@@ -1,0 +1,22 @@
+:host {
+  .input-box {
+    border-radius: 10px;
+    padding: 2%;
+    line-height: 1.2rem;
+  }
+
+  .shadow {
+    box-shadow: 4px 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  select,
+  select:focus {
+    outline: none;
+  }
+}

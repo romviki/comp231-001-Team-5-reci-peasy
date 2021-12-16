@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Merchandise } from 'src/app/models/Merchandise';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { DecimalValidator } from 'src/app/form-validators/decimal.validator';
+import { Allergen, Merchandise, Unit } from 'src/app/models/Merchandise';
 import { MerchandiseService } from 'src/app/services/merchandise.service';
 
 @Component({
@@ -10,78 +13,79 @@ import { MerchandiseService } from 'src/app/services/merchandise.service';
   styleUrls: ['./edit-merchandise.component.scss'],
 })
 export class EditMerchandiseComponent implements OnInit {
-  editMerchandiseForm: FormGroup;
-  soldByOptions: string[] = [
-    'Piece',
-    'Liters',
-    'MilliLitter',
-    'Grams',
-    'Kilograms',
-  ];
-  merchandiseId: string = '';
+  merchandise$?: Observable<Merchandise | undefined>;
+  editMerchandiseForm = this.fb.group({
+    name: ['', [Validators.required]],
+    price: ['', [Validators.required, DecimalValidator(2)]],
+    unit: ['', [Validators.required]],
+    volume: ['', [Validators.required, Validators.max(9999.99)]],
+    stock: ['', [Validators.max(9999), DecimalValidator(0)]],
+    allergens: this.fb.array([]),
+  });
+  units: Unit[] = ['g', 'kg', 'ml', 'L', 'counts'];
+  allergenTypes: Allergen[] = ['dairy', 'eggs', 'gluten', 'nuts', 'seafood'];
+  merchandiseId!: string;
 
   constructor(
     private merchandiseService: MerchandiseService,
-    private router: Router
-  ) {
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras.state as {
-      id: string;
-    };
+    private router: Router,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
 
-    this.editMerchandiseForm = new FormGroup({
-      name: new FormControl(),
-      price: new FormControl(),
-      soldBy: new FormControl(),
-      volume: new FormControl(),
-      allergenInformation: new FormControl(),
-    });
-
-    this.merchandiseId = state.id;
-
-    console.log('edit merchandise id: ', this.merchandiseId);
-    this.merchandiseService
-      .getMerchandise(this.merchandiseId)
-      .subscribe((res) => {
-        const selectedMerchandise = res as Merchandise;
-        console.log('merchandise for edit ->', selectedMerchandise);
-        // set form values
-        this.editMerchandiseForm.controls['name'].setValue(
-          selectedMerchandise?.name
-        );
-        this.editMerchandiseForm.controls['price'].setValue(
-          selectedMerchandise?.price
-        );
-        this.editMerchandiseForm.controls['soldBy'].setValue(
-          selectedMerchandise?.soldBy
-        );
-        this.editMerchandiseForm.controls['volume'].setValue(
-          selectedMerchandise?.volume
-        );
-        this.editMerchandiseForm.controls['allergenInformation'].setValue(
-          selectedMerchandise?.allergenInformation
-        );
-      });
+  get name() {
+    return this.editMerchandiseForm.get('name');
   }
 
-  ngOnInit(): void {}
+  get price() {
+    return this.editMerchandiseForm.get('price');
+  }
 
-  updateMerchandise() {
-    // bind to Merchandise Model
-    var updatedMerchandise = {
-      allergenInformation: this.editMerchandiseForm.value.allergenInformation,
-      name: this.editMerchandiseForm.value.name,
-      price: this.editMerchandiseForm.value.price,
-      soldBy: this.editMerchandiseForm.value.soldBy,
-      volume: this.editMerchandiseForm.value.volume,
-    } as Merchandise;
+  get unit() {
+    return this.editMerchandiseForm.get('unit');
+  }
 
-    // console.log('editMerchandiseForm -> ', updatedMerchandise);
+  get volume() {
+    return this.editMerchandiseForm.get('volume');
+  }
 
-    this.merchandiseService
-      .updateMerchandise(this.merchandiseId, updatedMerchandise)
-      .subscribe((res) => {
-        console.log('update result -> ', res);
-      });
+  get stock() {
+    return this.editMerchandiseForm.get('stock');
+  }
+
+  get allergens() {
+    return this.editMerchandiseForm.get('allergens') as FormArray;
+  }
+
+  addAllergenInput(allergen = '') {
+    this.allergens.push(this.fb.control(allergen));
+  }
+
+  removeAllergen(i: number) {
+    this.allergens.removeAt(i);
+    this.editMerchandiseForm.markAsDirty();
+  }
+
+  ngOnInit(): void {
+    this.merchandise$ = this.merchandiseService.editingMerchandise$.pipe(
+      tap((merchandise) => {
+        merchandise?.allergens?.forEach((allergen) =>
+          this.addAllergenInput(allergen)
+        );
+        this.editMerchandiseForm.patchValue(merchandise!);
+
+        this.merchandiseId = this.route.snapshot.params.id;
+      })
+    );
+  }
+
+  onSubmit() {
+    if (this.editMerchandiseForm.valid && this.editMerchandiseForm.dirty) {
+      this.merchandiseService.updateMerchandise(
+        this.merchandiseId,
+        this.editMerchandiseForm.value
+      );
+    }
+    this.router.navigate(['merchandise-list']);
   }
 }

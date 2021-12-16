@@ -2,119 +2,65 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
+  DocumentReference,
+  QueryFn,
 } from '@angular/fire/compat/firestore';
-import { Observable, BehaviorSubject, from, of } from 'rxjs';
-import {
-  finalize,
-  map,
-  shareReplay,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs/operators';
+import firebase from 'firebase/compat';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { Merchandise } from './../models/Merchandise';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MerchandiseService {
-  private merchandiseCollection: AngularFirestoreCollection<Merchandise>;
-  allMerchandise$: Observable<Merchandise[]>;
+  collectionName = 'merchandises';
+  collectionWithoutQuery: AngularFirestoreCollection<Merchandise>;
+  valueChangesWithoutQuery$: Observable<Merchandise[]>;
+  editingMerchandise$ = new BehaviorSubject<Merchandise | undefined>(undefined);
 
   constructor(private angularFireStore: AngularFirestore) {
-    this.merchandiseCollection = this.angularFireStore.collection<Merchandise>(
-      'merchandise',
-      (ref) => ref.limit(10)
-    );
-    this.allMerchandise$ = this.merchandiseCollection
-      .valueChanges({ idField: 'id' })
-      .pipe(take(1));
-  }
-
-  getAllMerchandise_tmp(): Observable<Merchandise[]> {
-    return this.allMerchandise$.pipe(
-      map((allMerchandise) => {
-        return allMerchandise.map((merchandise) => {
-          return {
-            id: merchandise.id,
-            allergenInformation: merchandise.allergenInformation,
-            name: merchandise.name,
-            price: merchandise.price,
-            soldBy: merchandise.soldBy,
-            volume: merchandise.volume,
-          };
-        });
+    this.collectionWithoutQuery = this.getCollection();
+    this.valueChangesWithoutQuery$ = this.collectionWithoutQuery
+      .valueChanges({
+        idField: 'id',
       })
-    );
+      .pipe(shareReplay());
   }
 
   getAllMerchandise(): Observable<Merchandise[]> {
-    return this.angularFireStore
-      .collection<Merchandise>('merchandise')
-      .snapshotChanges()
-      .pipe(
-        map((snaps) => {
-          return snaps.map((snap) => {
-            return <Merchandise>{
-              ...snap.payload.doc.data(),
-              id: snap.payload.doc.id,
-            };
-          });
-        })
-      );
+    return this.valueChangesWithoutQuery$.pipe(shareReplay());
   }
 
-  public initMerchandiseCollection(): void {
-    this.merchandiseCollection = this.angularFireStore.collection<Merchandise>(
-      'merchandise',
-      (ref) => ref.limit(10)
-    );
-    this.allMerchandise$ = this.merchandiseCollection
-      .valueChanges({ idField: 'id' })
-      .pipe(take(1));
+  createMerchandise(
+    newMerchandise: Merchandise
+  ): Promise<DocumentReference<Merchandise>> {
+    return this.collectionWithoutQuery.add(newMerchandise);
   }
 
-  createMerchandise(newMerchandise: Merchandise): Observable<any> {
-    return from(
-      this.angularFireStore
-        .collection<Merchandise>('merchandise')
-        .add(newMerchandise)
-    ).pipe(
-      // switchMap((documentReference) => this.merchandiseCollection.doc<Merchandise>(documentReference.id).valueChanges())
-      switchMap((documentReference) =>
-        this.angularFireStore
-          .collection<Merchandise>('merchandise')
-          .doc(documentReference.id)
-          .valueChanges()
-      )
-      // switchMap((documentReference) => {
-      //   return documentReference.set({...newMerchandise, ...{id: documentReference.id}});
-      // })
-    );
-  }
-
-  getMerchandise(merchandiseId: string): Observable<Merchandise | undefined> {
+  getMerchandiseById(
+    merchandiseId: string
+  ): Observable<Merchandise | undefined> {
     return this.angularFireStore
       .collection<Merchandise>('merchandise')
       .doc(merchandiseId)
       .valueChanges();
   }
 
-  updateMerchandise(
-    merchandiseId: string,
-    changes: Partial<Merchandise>
-  ): Observable<any> {
-    return of(
-      this.angularFireStore.doc(`merchandise/${merchandiseId}`).update(changes)
-    );
+  updateMerchandise(merchandiseId: string, changes: Partial<Merchandise>) {
+    return this.collectionWithoutQuery.doc(merchandiseId).update(changes);
   }
 
-  removeMerchandise(merchandiseId: string): Observable<any> {
-    return of(
-      this.angularFireStore
-        .collection('merchandise')
-        .doc(merchandiseId)
-        .delete()
+  removeMerchandiseById(merchandiseId: string) {
+    return this.collectionWithoutQuery.doc(merchandiseId).delete();
+  }
+
+  getCollection(
+    queryCallBack?: QueryFn<firebase.firestore.DocumentData>
+  ): AngularFirestoreCollection<Merchandise> {
+    return this.angularFireStore.collection<Merchandise>(
+      this.collectionName,
+      queryCallBack
     );
   }
 }
