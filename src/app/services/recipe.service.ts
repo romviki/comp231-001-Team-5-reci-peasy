@@ -2,30 +2,34 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
+  QueryFn,
 } from '@angular/fire/compat/firestore';
-import { Observable, BehaviorSubject, from } from 'rxjs';
-import { finalize, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
-import { Recipe, RecipeDetail, RecommendedRecipe } from './../models/Recipe';
+import firebase from 'firebase/compat';
+import { FirestoreError } from 'firebase/firestore';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, map, shareReplay, switchMap, take } from 'rxjs/operators';
+import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  private recipesCollection: AngularFirestoreCollection<Recipe>;
-  recipes$: Observable<Recipe[]>;
+  collectionName = 'recipes';
+  collectionWithoutQuery: AngularFirestoreCollection<Recipe>;
+  valueChangesWithoutQuery$: Observable<Recipe[]>;
 
   constructor(private angularFireStore: AngularFirestore) {
-    this.recipesCollection = this.angularFireStore.collection<Recipe>(
-      'recipes',
-      (ref) => ref.limit(10)
-    );
-    this.recipes$ = this.recipesCollection
+    this.collectionWithoutQuery = this.getCollection();
+    this.valueChangesWithoutQuery$ = this.collectionWithoutQuery
       .valueChanges({ idField: 'id' })
-      .pipe(take(1));
+      .pipe(shareReplay());
   }
 
   getRecommendedRecipes(): Observable<RecommendedRecipe[]> {
-    return this.recipes$.pipe(
+    const recipes$ = this.getValueChanges$((ref) =>
+      ref.orderBy('metaData.viewed').limit(10)
+    );
+    return recipes$.pipe(
       map((recipes) => {
         return recipes.map((recipe) => {
           return {
@@ -40,34 +44,45 @@ export class RecipeService {
     );
   }
 
-  getRecipeById(recipeId: string): Observable<RecipeDetail | undefined> {
-    return this.recipesCollection
-      .doc(recipeId)
-      .valueChanges({ idField: 'id' })
-      .pipe(
-        map((recipe) => {
-          if(recipe === undefined) return undefined
-
-          return {
-            id: recipe.id,
-            name: recipe.metaData.name,
-            description: recipe.metaData.description,
-            img: recipe.metaData.img,
-            viewed: recipe.metaData.viewed,
-            ingredients: recipe.recipeDetails.ingredients,
-            instructions: recipe.recipeDetails.instructions,
-            cookingTime: recipe.recipeDetails.cookingTime,
-            servingPortion: recipe.recipeDetails.servingPortion,
-            dietaryInformation: recipe.recipeDetails.dietaryInformation
-          }
-        })
-      );
+  getRecipeById(recipeId: string) {
+    const recipe$ = this.getCollection().doc(recipeId).get();
+    return recipe$.pipe(
+      map((res) => res.data()),
+      catchError((err: FirestoreError) => throwError(err.message)),
+      take(1)
+    );
   }
 
-  createRecipe(newRecipe: Recipe) : Observable<any> {
-    return from(this.angularFireStore.collection<Recipe>('recipes').add(newRecipe))
-      .pipe(
-          switchMap((documentReference) => this.angularFireStore.collection<Recipe>('recipes').doc(documentReference.id).valueChanges())
-        );
+  getRecipes() {
+    return this.getValueChanges$((ref) => ref.limit(50));
+  }
+
+  getCollection(
+    queryCallBack?: QueryFn<firebase.firestore.DocumentData>
+  ): AngularFirestoreCollection<Recipe> {
+    return this.angularFireStore.collection<Recipe>(
+      this.collectionName,
+      queryCallBack
+    );
+  }
+
+  getValueChanges$(
+    queryCallBack?: QueryFn<firebase.firestore.DocumentData>
+  ): Observable<Recipe[]> {
+    const recipesCollection = this.getCollection(queryCallBack);
+    return recipesCollection.valueChanges({ idField: 'id' }).pipe(take(1));
+  }
+
+  createRecipe(newRecipe: Recipe): Observable<any> {
+    return from(
+      this.angularFireStore.collection<Recipe>('recipes').add(newRecipe)
+    ).pipe(
+      switchMap((documentReference) =>
+        this.angularFireStore
+          .collection<Recipe>('recipes')
+          .doc(documentReference.id)
+          .valueChanges()
+      )
+    );
   }
 }

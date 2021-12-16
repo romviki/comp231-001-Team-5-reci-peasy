@@ -1,0 +1,23 @@
+:host {
+  .bg-grey {
+    background: #f4f7fc;
+  }
+
+  tr {
+    &:nth-child(even) {
+      background: white;
+    }
+  }
+
+  .btn-merchandise {
+    cursor: pointer;
+  }
+
+  .vertical-align-middle {
+    vertical-align: middle;
+  }
+
+  .bg-out-of-stock {
+    background-color: #c9d1d7;
+  }
+}

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { RecommendedRecipe } from 'src/app/models/Recipe';
-import { LoadingService } from 'src/app/services/loading.service';
 import { RecipeService } from './../../services/recipe.service';
 
 @Component({
@@ -12,14 +11,9 @@ import { RecipeService } from './../../services/recipe.service';
 export class RecommendedRecipeContainerComponent implements OnInit {
   recommendedRecipes$?: Observable<RecommendedRecipe[]>;
 
-  constructor(
-    public recipeService: RecipeService,
-    public loadingService: LoadingService
-  ) {}
+  constructor(public recipeService: RecipeService) {}
 
   ngOnInit() {
-    this.recommendedRecipes$ = this.loadingService.showLoaderUntilCompleted(
-      this.recipeService.getRecommendedRecipes()
-    );
+    this.recommendedRecipes$ = this.recipeService.getRecommendedRecipes();
   }
 }

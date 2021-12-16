@@ -1,14 +1,45 @@
-<div class="container w-100 w-md-50 w-xl-25">
+<div class="container w-100 w-md-50 w-xl-25 search-bar">
   <div class="input-group search__input-group">
     <span class="input-group-text"
-      ><img src="../../../assets/search_icon.svg"
+      ><img src="../../../assets/icons/search-icon.svg"
     /></span>
     <input
+      #searchBar
       type="text"
-      class="form-control"
+      class="form-control w-75 w-md-50 w-xl-25"
       placeholder="Search.."
       aria-label="search"
       aria-describedby="search"
+      name="search"
+      [ngModel]="selectedRecipe"
+      [typeahead]="recipes$"
+      typeaheadOptionField="name"
+      [typeaheadAsync]="true"
+      [isAnimated]="true"
+      [typeaheadItemTemplate]="searchItemTemplate"
+      [container]="'.search-bar'"
+      [typeaheadOptionsLimit]="5"
+      (input)="emitInput(searchBar.value)"
+      (typeaheadOnSelect)="navigateToRecipeDetail($event)"
     />
   </div>
 </div>
+
+<ng-template #searchItemTemplate let-recipe="item">
+  <div
+    class="
+      from-control
+      d-flex
+      justify-content-between
+      align-items-center
+      search-item
+      p-2
+    "
+  >
+    <div>
+      <img class="search-img mx-2" [src]="recipe.img" alt="recipe image" />
+    </div>
+    <div class="text-center">{{ recipe.description | slice: 0:35 }}...</div>
+  </div>
+  <div class="d-flex text-center border-bottom">{{ recipe.name }}</div>
+</ng-template>

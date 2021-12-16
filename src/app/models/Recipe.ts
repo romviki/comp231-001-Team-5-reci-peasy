@@ -7,19 +7,18 @@ export interface Recipe {
     viewed: number;
   };
   recipeDetails: {
-    ingredients: Ingredients[],
-    instructions: string,
-    cookingTime: string,
-    servingPortion: string,
-    dietaryInformation: string
-  }
+    ingredients: Ingredients[];
+    instructions: string;
+    cookingTime: string;
+    servingPortion: string;
+    dietaryInformation: string;
+  };
 }
 
 export interface Ingredients {
-  name: string,
-  amount: number,
-  unit: string
+  name: string;
+  amount: number;
+  unit: 'g' | 'kg' | 'ml' | 'L' | 'pieces';
 }
 
 export type RecommendedRecipe = { id: string } & Recipe['metaData'];
-export type RecipeDetail = { id: string } & Recipe['metaData'] & Recipe['recipeDetails'];

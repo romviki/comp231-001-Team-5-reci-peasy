@@ -1,3 +1,5 @@
+@import "bootstrap/dist/css/bootstrap.css";
+
 :host {
   text-align: center;
 
@@ -19,4 +21,18 @@
       background-color: #e9fbf3;
     }
   }
+}
+
+.search-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+typeahead-container {
+  width: 50% !important;
+}
+
+::ng-deep .dropdown-menu {
+  min-width: 25rem;
 }
