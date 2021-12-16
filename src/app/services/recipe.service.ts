@@ -6,8 +6,8 @@ import {
 } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat';
 import { FirestoreError } from 'firebase/firestore';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map, shareReplay, take } from 'rxjs/operators';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { Recipe, RecommendedRecipe } from './../models/Recipe';
 
 @Injectable({
@@ -71,5 +71,18 @@ export class RecipeService {
   ): Observable<Recipe[]> {
     const recipesCollection = this.getCollection(queryCallBack);
     return recipesCollection.valueChanges({ idField: 'id' }).pipe(take(1));
+  }
+
+  createRecipe(newRecipe: Recipe): Observable<any> {
+    return from(
+      this.angularFireStore.collection<Recipe>('recipes').add(newRecipe)
+    ).pipe(
+      switchMap((documentReference) =>
+        this.angularFireStore
+          .collection<Recipe>('recipes')
+          .doc(documentReference.id)
+          .valueChanges()
+      )
+    );
   }
 }
