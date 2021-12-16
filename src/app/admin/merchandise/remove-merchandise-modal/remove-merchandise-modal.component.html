@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Remove Merchandise</h4>
+  <button
+    type="button"
+    class="btn-close close pull-right"
+    aria-label="Close"
+    (click)="bsModalRef.hide()"
+  >
+    <span aria-hidden="true" class="visually-hidden">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p>
+    Are you sure to remove
+    <span class="fw-bold"> {{ merchandiseName }} </span>?
+  </p>
+</div>
+<div class="modal-footer flex-nowrap">
+  <button type="button" class="btn btn-danger" (click)="removeMerchandise()">
+    Confirm
+  </button>
+  <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">
+    Dismiss
+  </button>
+</div>

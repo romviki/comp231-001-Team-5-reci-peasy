@@ -1,5 +1,5 @@
-<div class="col-md-6">
-  <form [formGroup]="addMerchandiseForm" (ngSubmit)="onSubmit()">
+<div class="col-md-6" *ngIf="merchandise$ | async as merchandise">
+  <form [formGroup]="editMerchandiseForm" (ngSubmit)="onSubmit()">
     <div class="mb-3 has-validation">
       <label class="form-label mb-2" for="name">Merchandise Name</label>
       <input
@@ -53,6 +53,7 @@
           class="input-group-text bg-white input-box shadow"
           formControlName="unit"
         >
+          <option value="" *ngIf="!merchandise?.unit">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">
             {{ unit }}
           </option>
@@ -75,12 +76,6 @@
         *ngIf="volume?.invalid && (volume?.dirty || volume?.touched) && volume?.errors?.['max']"
       >
         Volume is too much
-      </div>
-      <div
-        class="text-danger mt-1"
-        *ngIf="volume?.invalid && (volume?.dirty || volume?.touched) && volume?.errors?.['decimalError']"
-      >
-        Volume must be 2 or fewer decimals
       </div>
     </div>
 
@@ -143,7 +138,7 @@
 
     <div class="mt-3 d-flex justify-content-end">
       <div class="d-inline-flex">
-        <button type="submit" class="btn btn-primary">Add</button>
+        <button type="submit" class="btn btn-primary">Update</button>
         <a routerLink="/merchandise-list" class="btn btn-default">Cancel</a>
       </div>
     </div>
